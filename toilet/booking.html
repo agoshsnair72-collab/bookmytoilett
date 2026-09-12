@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BookMyToilet — Booking</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}body{font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#fff;color:#202124;min-height:100vh}
+nav{height:70px;border-bottom:1px solid #e8eaed;display:flex;align-items:center;justify-content:space-between;padding:0 6%;position:sticky;top:0;background:rgba(255,255,255,.96);z-index:5}.brand{font-size:21px;font-weight:800}.brand span{color:#16a085}.links{display:flex;gap:7px}.links a{padding:9px 13px;text-decoration:none;color:#5f6368;border-radius:9px;font-size:14px}.links a:hover{background:#f1f3f4;color:#202124}
+main{width:min(1050px,90%);margin:auto;padding:48px 0}.heading{text-align:center;margin-bottom:30px}.heading h1{font-size:38px;letter-spacing:-1px;margin-bottom:9px}.heading p{color:#70757a}
+.search{display:flex;gap:10px;margin:0 auto 28px;max-width:700px}.search input{flex:1;padding:14px 16px;border:1px solid #dadce0;border-radius:11px;font-size:15px;outline:none}.search input:focus{border-color:#16a085}.search button,.book-btn{border:0;border-radius:10px;background:#16a085;color:white;padding:12px 18px;font-weight:700;cursor:pointer}.search button:hover,.book-btn:hover{filter:brightness(.95)}
+#results{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.toilet{border:1px solid #e1e4e8;border-radius:16px;padding:22px;background:#fff;box-shadow:0 5px 22px rgba(0,0,0,.04)}.toilet h2{font-size:20px;margin-bottom:5px}.location{font-size:13px;color:#80868b;margin-bottom:16px}.status{display:inline-block;padding:6px 10px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:18px}.available{background:#e6f4ea;color:#137333}.using{background:#fce8e6;color:#c5221f}.booked{background:#fef7e0;color:#b06000}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:5px}.form label{font-size:12px;color:#5f6368}.form input{width:100%;margin-top:5px;padding:10px;border:1px solid #dadce0;border-radius:8px}.full{grid-column:1/-1}.actions{display:flex;gap:8px;margin-top:13px}.now{background:#202124}.message{font-size:13px;color:#5f6368;margin-top:10px;min-height:18px}
+.empty{grid-column:1/-1;text-align:center;color:#80868b;padding:35px;border:1px dashed #dadce0;border-radius:14px}
+@media(max-width:700px){#results{grid-template-columns:1fr}.links a{display:none}.form{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav><div class="brand">BookMy<span>Toilet</span><span class="toilet-logo" aria-label="Toilet" title="Toilet" style="display:inline-flex;align-items:center;justify-content:center;margin-left:8px;vertical-align:middle;">
+<svg width="28" height="28" viewBox="0 0 64 64" aria-hidden="true">
+  <rect x="13" y="8" width="38" height="20" rx="4" fill="none" stroke="currentColor" stroke-width="4"/>
+  <path d="M20 28v7c0 10 8 18 18 18h2c6 0 11-5 11-11v-3H34" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M23 28h18M19 53h31" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+</svg>
+</span></div><div class="links">
+<a href="home.html">Home</a><a href="booking.html">Booking</a><a href="behaviour.html">Behaviour</a><a href="ranking.html">Ranking</a><a href="community.html">Community</a></div></nav>
+<main>
+<div class="heading"><h1>Find a Toilet</h1><p>Search a locality and check live toilet availability.</p></div>
+<div class="search"><input id="citySearch" placeholder="Search city or locality — e.g. West Hill"><button id="searchBtn">Search</button></div>
+<div id="results"></div>
+</main>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import {
+    getAuth,
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    updateDoc,
+    doc,
+    getDoc,
+    getDocs,
+    query,
+    where,
+    orderBy,
+    onSnapshot,
+    serverTimestamp,
+    Timestamp
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBO7VfF6_g0xqlk5hN6U3gVScepf1rxdMQ",
+    authDomain: "bookmytoilet-d9db9.firebaseapp.com",
+    projectId: "bookmytoilet-d9db9",
+    storageBucket: "bookmytoilet-d9db9.firebasestorage.app",
+    messagingSenderId: "312633534307",
+    appId: "1:312633534307:web:d27390e8af8a4473001556"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUser=null, toilets=[];
+const results=document.getElementById("results");
+onAuthStateChanged(auth,user=>{
+ if(!user){location.href="login.html";return}
+ currentUser=user; loadToilets();
+});
+function loadToilets(){
+ onSnapshot(collection(db,"toilets"),snap=>{
+   toilets=snap.docs.map(d=>({id:d.id,...d.data()}));
+   search();
+ },error=>{
+   console.error(error);
+   results.innerHTML='<div class="empty">Could not load toilets. Check Firestore rules.</div>';
+ });
+}
+function render(list){
+ results.innerHTML="";
+ if(!list.length){results.innerHTML='<div class="empty">No toilets found for this locality.</div>';return}
+ list.forEach(t=>{
+   const status=(t.status||"available").toLowerCase();
+   const safeStatus=status==="occupied"?"occupied":"available";
+   const card=document.createElement("div");card.className="toilet";
+
+   let nowButton="";
+   if(safeStatus==="available"){
+     nowButton='<button class="book-btn now">Start Using Now</button>';
+   }else{
+     nowButton='<button class="book-btn now">Finish Using</button>';
+   }
+
+   card.innerHTML=`<h2>${esc(t.name||"Toilet")}</h2><div class="location">${esc(t.subLocality||t.locality||t.city||"Locality")}</div>
+   <span class="status ${safeStatus}">${safeStatus.toUpperCase()}</span>
+   <div class="form">
+    <label>Date<input class="date" type="date"></label>
+    <label>Time<input class="time" type="time"></label>
+    <label>Estimated time (minutes)<input class="duration" type="number" min="1" value="10"></label>
+   </div>
+   <div class="actions"><button class="book-btn slot" ${safeStatus==="occupied"?"disabled":""}>Book Slot</button>${nowButton}</div><div class="message"></div>`;
+   results.appendChild(card);
+
+   if(safeStatus==="available"){
+     card.querySelector(".slot").onclick=()=>book(t,card,false);
+     card.querySelector(".now").onclick=()=>startUsage(t,card);
+   }else{
+     card.querySelector(".now").onclick=()=>finishUsage(t,card);
+   }
+ });
+}
+
+async function startUsage(t,card){
+ const msg=card.querySelector(".message");
+ try{
+   const now=new Date();
+   const date=now.toISOString().slice(0,10);
+   const startTime=now.toTimeString().slice(0,5);
+
+   const logRef=await addDoc(
+     collection(db,"users",currentUser.uid,"usageLogs"),
+     {
+       userId:currentUser.uid,
+       toiletId:t.id,
+       toiletName:t.name||"Toilet",
+       locality:t.locality||t.city||"",
+       subLocality:t.subLocality||"",
+       date:date,
+       startTime:startTime,
+       endTime:null,
+       duration:null,
+       status:"active",
+       createdAt:serverTimestamp()
+     }
+   );
+
+   await updateDoc(doc(db,"toilets",t.id),{
+     status:"occupied",
+     activeLogId:logRef.id,
+     activeUserId:currentUser.uid
+   });
+
+   msg.textContent="Usage started.";
+ }catch(e){
+   console.error(e);
+   msg.textContent="Could not start usage. Check Firestore rules.";
+ }
+}
+
+async function finishUsage(t,card){
+ const msg=card.querySelector(".message");
+ try{
+   const now=new Date();
+   const endTime=now.toTimeString().slice(0,5);
+   const start=await getActiveLog(t);
+
+   if(!start){
+     msg.textContent="Active usage log not found.";
+     return;
+   }
+
+   const startDate=new Date(start.date+"T"+start.startTime+":00");
+   let duration=Math.round((now-startDate)/60000);
+   if(duration<0)duration=0;
+
+   await updateDoc(
+     doc(db,"users",currentUser.uid,"usageLogs",start.id),
+     {
+       endTime:endTime,
+       duration:duration,
+       status:"completed"
+     }
+   );
+
+   await updateDoc(doc(db,"toilets",t.id),{
+     status:"available",
+     activeLogId:null,
+     activeUserId:null
+   });
+
+   msg.textContent=`Usage finished. Duration: ${duration} minute(s).`;
+ }catch(e){
+   console.error(e);
+   msg.textContent="Could not finish usage. Check Firestore rules.";
+ }
+}
+
+async function getActiveLog(t){
+ if(t.activeLogId){
+   const snap=await getDoc(doc(db,"users",currentUser.uid,"usageLogs",t.activeLogId));
+   if(snap.exists())return {id:snap.id,...snap.data()};
+ }
+ return null;
+}
+
+async function book(t,card,now){
+ const date=card.querySelector(".date").value||new Date().toISOString().slice(0,10);
+ const time=now?new Date().toTimeString().slice(0,5):card.querySelector(".time").value;
+ const duration=Number(card.querySelector(".duration").value)||10;
+ const msg=card.querySelector(".message");
+ if(!now&&!time){msg.textContent="Please select a time.";return}
+ try{
+   const q=query(collection(db,"bookings"),where("toiletId","==",t.id),where("date","==",date),where("status","==","booked"));
+   const existing=await getDocs(q);
+   let conflict=false;
+   const startMin=toMin(time), endMin=startMin+duration;
+   existing.forEach(d=>{const b=d.data();const bs=toMin(b.time),be=bs+Number(b.duration||10);if(startMin<be&&endMin>bs)conflict=true});
+   if(conflict){msg.textContent="This slot is already booked. Choose another time.";return}
+   await addDoc(collection(db,"bookings"),{userId:currentUser.uid,toiletId:t.id,toiletName:t.name||"Toilet",locality:t.locality||t.city||"",date,time,duration,status:"booked",createdAt:serverTimestamp()});
+   // A future reservation does not make the physical toilet occupied.
+   msg.textContent="Booking confirmed.";
+ }catch(e){console.error(e);msg.textContent="Could not complete booking. Check Firestore setup/rules."}
+}
+function toMin(s){const [h,m]=s.split(":").map(Number);return h*60+m}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+document.getElementById("searchBtn").onclick=search;
+document.getElementById("citySearch").oninput=search;
+function search(){const s=document.getElementById("citySearch").value.trim().toLowerCase();render(!s?toilets:toilets.filter(t=>`${t.city||""} ${t.locality||""} ${t.name||""}`.toLowerCase().includes(s)))}
+</script>
+</body></html>

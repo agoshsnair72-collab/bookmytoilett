@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>BookMyToilet — Ranking</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#fff;color:#202124}nav{height:70px;border-bottom:1px solid #e8eaed;display:flex;align-items:center;justify-content:space-between;padding:0 6%;background:#fff;position:sticky;top:0}.brand{font-size:21px;font-weight:800}.brand span{color:#16a085}.links{display:flex;gap:7px}.links a{padding:9px 13px;text-decoration:none;color:#5f6368;border-radius:9px;font-size:14px}.links a:hover{background:#f1f3f4}main{width:min(900px,90%);margin:auto;padding:48px 0}.title{text-align:center;margin-bottom:28px}.title h1{font-size:38px;margin:0 0 8px}.title p{color:#70757a}.table{border:1px solid #e1e4e8;border-radius:15px;overflow:hidden;box-shadow:0 5px 20px rgba(0,0,0,.04)}.row{display:grid;grid-template-columns:70px 1fr 150px 130px;padding:16px 20px;border-bottom:1px solid #edf0f2;align-items:center}.row:last-child{border:0}.head{background:#f8f9fa;font-size:12px;font-weight:700;color:#70757a}.score{font-weight:800;color:#16a085}.me{background:#e6f4ea}.links a:last-child{font-weight:700}@media(max-width:650px){.row{grid-template-columns:45px 1fr 85px}.row div:nth-child(4){display:none}.links a{display:none}}
+</style></head><body>
+<nav><div class="brand">BookMy<span>Toilet</span></div><div class="links"><a href="home.html">Home</a><a href="booking.html">Booking</a><a href="behaviour.html">Behaviour</a><a href="ranking.html">Ranking</a><a href="community.html">Community</a></div></nav>
+<main><div class="title"><h1>Community Ranking</h1><p>Ranking of registered users by total toilet usage duration.</p></div>
+<div class="table"><div class="row head"><div>#</div><div>USER</div><div>USES</div><div>TITLE</div></div><div id="rows"></div></div>
+</main>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import {
+    getAuth,
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    doc,
+    getDoc,
+    getDocs,
+    query,
+    where,
+    orderBy,
+    onSnapshot,
+    serverTimestamp,
+    Timestamp
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBO7VfF6_g0xqlk5hN6U3gVScepf1rxdMQ",
+    authDomain: "bookmytoilet-d9db9.firebaseapp.com",
+    projectId: "bookmytoilet-d9db9",
+    storageBucket: "bookmytoilet-d9db9.firebasestorage.app",
+    messagingSenderId: "312633534307",
+    appId: "1:312633534307:web:d27390e8af8a4473001556"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+onAuthStateChanged(auth,user=>{
+ if(!user){location.href="login.html";return}
+ load(user);
+});
+
+async function load(current){
+  try{
+    const usersSnap = await getDocs(collection(db,"users"));
+    const users = usersSnap.docs.map(d => ({id:d.id,...d.data()}));
+
+    for(const user of users){
+      const logsSnap = await getDocs(
+        collection(db,"users",user.id,"usageLogs")
+      );
+
+      let totalDuration = 0;
+      let uses = 0;
+
+      logsSnap.docs.forEach(d=>{
+        const log = d.data();
+        if(log.status !== "completed") return;
+
+        const duration = Number(log.duration || 0);
+        if(!Number.isFinite(duration) || duration < 0) return;
+
+        totalDuration += duration;
+        uses++;
+      });
+
+      user.uses = uses;
+      user.totalDuration = totalDuration;
+    }
+
+    // Rank directly by total completed usage duration.
+    users.sort((a,b)=>b.totalDuration-a.totalDuration);
+
+    document.getElementById("rows").innerHTML =
+      users.map((u,i)=>`
+        <div class="row ${u.id===current.uid?"me":""}">
+          <div>${i+1}</div>
+          <div>${esc(u.username || u.name || u.email?.split("@")[0] || "User")}</div>
+          <div>${u.uses}</div>
+          <div class="score">${i===0?"CEO":""}</div>
+        </div>
+      `).join("") ||
+      '<div style="padding:25px;text-align:center;color:#777">No users yet.</div>';
+
+  }catch(error){
+    console.error("Ranking error:",error);
+    document.getElementById("rows").innerHTML =
+      '<div style="padding:25px;text-align:center;color:#777">Unable to load ranking data.</div>';
+  }
+}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+</script></body></html>

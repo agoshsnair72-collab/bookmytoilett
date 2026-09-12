@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | BookMyToilet</title>
+
+    <!-- Modern font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --text: #17202a;
+            --muted: #6b747c;
+            --border: #dfe5e2;
+            --background: #f7f9f8;
+            --white: #ffffff;
+            --dark: #17202a;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            color: var(--text);
+            background: var(--background);
+        }
+
+        button,
+        input {
+            font-family: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .auth-page {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        /* LEFT SIDE */
+
+        .auth-intro {
+            min-height: 100vh;
+            padding: 48px 8%;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            background: #eaf3ef;
+        }
+
+        .brand {
+            width: fit-content;
+            color: var(--text);
+            text-decoration: none;
+
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+        }
+
+        .intro-content {
+            max-width: 560px;
+            margin-top: -40px;
+        }
+
+        .eyebrow {
+            margin-bottom: 14px;
+
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+        }
+
+        .intro-content h1 {
+            margin-bottom: 24px;
+
+            font-size: clamp(3rem, 5vw, 5.2rem);
+            line-height: 0.98;
+            letter-spacing: -0.055em;
+        }
+
+        .intro-text {
+            max-width: 460px;
+
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #59636a;
+        }
+
+        .copyright {
+            color: #6c767c;
+            font-size: 0.8rem;
+        }
+
+        /* RIGHT SIDE */
+
+        .auth-box {
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 40px;
+            background: var(--white);
+        }
+
+        .form-container {
+            width: min(100%, 430px);
+        }
+
+        .form-header {
+            margin-bottom: 32px;
+        }
+
+        .form-header h2 {
+            margin-bottom: 8px;
+
+            font-size: 2.1rem;
+            line-height: 1.1;
+            letter-spacing: -0.045em;
+        }
+
+        .form-header p:last-child {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        /* TABS */
+
+        .auth-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+
+            margin-bottom: 28px;
+
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            position: relative;
+
+            padding: 13px 5px;
+
+            border: none;
+            background: transparent;
+
+            color: #858d92;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .tab.active {
+            color: var(--text);
+        }
+
+        .tab.active::after {
+            content: "";
+
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -1px;
+
+            height: 2px;
+
+            background: var(--dark);
+        }
+
+        /* FORM */
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+
+            margin-bottom: 8px;
+
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .label-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .forgot-link {
+            border: none;
+            background: transparent;
+
+            color: #687278;
+            font-size: 0.78rem;
+        }
+
+        input {
+            width: 100%;
+
+            padding: 14px 15px;
+
+            border: 1px solid var(--border);
+            border-radius: 8px;
+
+            outline: none;
+
+            background: #fff;
+            color: var(--text);
+
+            font-size: 0.92rem;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        input::placeholder {
+            color: #a0a7ab;
+        }
+
+        input:focus {
+            border-color: #17202a;
+
+            box-shadow: 0 0 0 3px rgba(23, 32, 42, 0.08);
+        }
+
+        /* PASSWORD */
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 65px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 14px;
+
+            transform: translateY(-50%);
+
+            border: none;
+            background: transparent;
+
+            color: #606a70;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        /* BUTTON */
+
+        .submit-btn {
+            width: 100%;
+
+            margin-top: 5px;
+            padding: 15px;
+
+            border: none;
+            border-radius: 8px;
+
+            background: var(--dark);
+            color: #ffffff;
+
+            font-size: 0.9rem;
+            font-weight: 700;
+
+            transition:
+                transform 0.15s ease,
+                opacity 0.15s ease;
+        }
+
+        .submit-btn:hover {
+            opacity: 0.92;
+        }
+
+        .submit-btn:active {
+            transform: scale(0.99);
+        }
+
+        .submit-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* MESSAGE */
+
+        .form-message {
+            min-height: 22px;
+            margin-bottom: 10px;
+            font-size: 0.82rem;
+        }
+
+        .form-message.error {
+            color: #bd3434;
+        }
+
+        .form-message.success {
+            color: #28734a;
+        }
+
+        /* FOOTER TEXT */
+
+        .switch-text {
+            margin-top: 24px;
+
+            text-align: center;
+
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        .switch-text button {
+            border: none;
+            background: transparent;
+
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        /* HELPERS */
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 850px) {
+
+            .auth-page {
+                grid-template-columns: 1fr;
+            }
+
+            .auth-intro {
+                min-height: auto;
+                padding: 28px 7%;
+            }
+
+            .intro-content {
+                margin: 70px 0 60px;
+            }
+
+            .intro-content h1 {
+                font-size: clamp(2.7rem, 10vw, 4rem);
+            }
+
+            .copyright {
+                display: none;
+            }
+
+            .auth-box {
+                min-height: auto;
+                padding: 60px 7%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="auth-page">
+
+        <!-- LEFT SIDE -->
+        <section class="auth-intro">
+
+            <a href="index.html" class="brand">
+                BookMyToilet
+            </a>
+
+            <div class="intro-content">
+
+                <p class="eyebrow">WELCOME</p>
+
+                <h1>
+                    Find a toilet.<br>
+                    Book your slot.<br>
+                    Keep moving.
+                </h1>
+
+                <p class="intro-text">
+                    Find nearby toilets, check live availability and
+                    reserve your slot before you arrive.
+                </p>
+
+            </div>
+
+            <p class="copyright">
+                © 2026 BookMyToilet
+            </p>
+
+        </section>
+
+
+        <!-- RIGHT SIDE -->
+        <section class="auth-box">
+
+            <div class="form-container">
+
+                <div class="form-header">
+
+                    <p class="eyebrow">ACCOUNT</p>
+
+                    <h2 id="formTitle">
+                        Welcome back
+                    </h2>
+
+                    <p id="formSubtitle">
+                        Sign in to continue to BookMyToilet.
+                    </p>
+
+                </div>
+
+
+                <!-- LOGIN / REGISTER TABS -->
+
+                <div class="auth-tabs">
+
+                    <button
+                        type="button"
+                        id="loginTab"
+                        class="tab active"
+                    >
+                        Sign in
+                    </button>
+
+                    <button
+                        type="button"
+                        id="registerTab"
+                        class="tab"
+                    >
+                        Create account
+                    </button>
+
+                </div>
+
+
+                <!-- FORM -->
+
+                <form id="authForm">
+
+                    <!-- NAME -->
+
+                    <div
+                        class="input-group hidden"
+                        id="nameGroup"
+                    >
+
+                        <label for="name">
+                            Full name
+                        </label>
+
+                        <input
+                            type="text"
+                            id="name"
+                            placeholder="Your name"
+                            autocomplete="name"
+                        >
+
+                    </div>
+
+
+                    <!-- EMAIL -->
+
+                    <div class="input-group">
+
+                        <label for="email">
+                            Email address
+                        </label>
+
+                        <input
+                            type="email"
+                            id="email"
+                            placeholder="you@example.com"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+
+                    <div class="input-group">
+
+                        <div class="label-row">
+
+                            <label for="password">
+                                Password
+                            </label>
+
+                            <button
+                                type="button"
+                                id="forgotPassword"
+                                class="forgot-link"
+                            >
+                                Forgot password?
+                            </button>
+
+                        </div>
+
+                        <div class="password-wrapper">
+
+                            <input
+                                type="password"
+                                id="password"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                id="togglePassword"
+                                class="password-toggle"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CONFIRM PASSWORD -->
+
+                    <div
+                        class="input-group hidden"
+                        id="confirmPasswordGroup"
+                    >
+
+                        <label for="confirmPassword">
+                            Confirm password
+                        </label>
+
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            placeholder="Repeat your password"
+                            autocomplete="new-password"
+                        >
+
+                    </div>
+
+
+                    <!-- MESSAGE -->
+
+                    <p
+                        id="formMessage"
+                        class="form-message"
+                    ></p>
+
+
+                    <!-- SUBMIT -->
+
+                    <button
+                        type="submit"
+                        id="submitButton"
+                        class="submit-btn"
+                    >
+                        Sign in
+                    </button>
+
+                </form>
+
+
+                <!-- SWITCH -->
+
+                <p
+                    class="switch-text"
+                    id="switchText"
+                >
+                    Don't have an account?
+
+                    <button
+                        type="button"
+                        id="switchButton"
+                    >
+                        Create one
+                    </button>
+
+                </p>
+
+            </div>
+
+        </section>
+
+    </div>
+
+
+    <!-- Firebase Authentication -->
+    <script type="module">
+
+        import {
+            initializeApp
+        } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+
+        import {
+            getAuth,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            updateProfile,
+            sendPasswordResetEmail
+        } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+
+        import {
+            getFirestore,
+            doc,
+            setDoc,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+
+        /*
+        =====================================================
+        FIREBASE CONFIGURATION
+        =====================================================
+
+        Replace these values with the configuration from:
+
+        Firebase Console
+        → Project settings
+        → Your apps
+        → Web app
+        → SDK setup and configuration
+        */
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBO7VfF6_g0xqlk5hN6U3gVScepf1rxdMQ",
+            authDomain: "bookmytoilet-d9db9.firebaseapp.com",
+            projectId: "bookmytoilet-d9db9",
+            storageBucket: "bookmytoilet-d9db9.firebasestorage.app",
+            messagingSenderId: "312633534307",
+            appId: "1:312633534307:web:d27390e8af8a4473001556",
+            measurementId: "G-3M2Q42ZNM6"
+        };
+
+
+        const app = initializeApp(firebaseConfig);
+
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+
+        // ---------------------------------------------
+        // ELEMENTS
+        // ---------------------------------------------
+
+        const authForm =
+            document.getElementById("authForm");
+
+        const loginTab =
+            document.getElementById("loginTab");
+
+        const registerTab =
+            document.getElementById("registerTab");
+
+        const switchButton =
+            document.getElementById("switchButton");
+
+        const formTitle =
+            document.getElementById("formTitle");
+
+        const formSubtitle =
+            document.getElementById("formSubtitle");
+
+        const nameGroup =
+            document.getElementById("nameGroup");
+
+        const confirmPasswordGroup =
+            document.getElementById("confirmPasswordGroup");
+
+        const nameInput =
+            document.getElementById("name");
+
+        const emailInput =
+            document.getElementById("email");
+
+        const passwordInput =
+            document.getElementById("password");
+
+        const confirmPasswordInput =
+            document.getElementById("confirmPassword");
+
+        const submitButton =
+            document.getElementById("submitButton");
+
+        const formMessage =
+            document.getElementById("formMessage");
+
+        const togglePassword =
+            document.getElementById("togglePassword");
+
+        const forgotPassword =
+            document.getElementById("forgotPassword");
+
+
+        // ---------------------------------------------
+        // STATE
+        // ---------------------------------------------
+
+        let registerMode = false;
+
+
+        // ---------------------------------------------
+        // CHANGE LOGIN / REGISTER MODE
+        // ---------------------------------------------
+
+        function setMode(isRegister) {
+
+            registerMode = isRegister;
+
+            clearMessage();
+
+
+            if (registerMode) {
+
+                loginTab.classList.remove("active");
+
+                registerTab.classList.add("active");
+
+                nameGroup.classList.remove("hidden");
+
+                confirmPasswordGroup
+                    .classList
+                    .remove("hidden");
+
+                formTitle.textContent =
+                    "Create your account";
+
+                formSubtitle.textContent =
+                    "Join BookMyToilet and start booking nearby toilets.";
+
+                submitButton.textContent =
+                    "Create account";
+
+                switchButton.textContent =
+                    "Sign in";
+
+                forgotPassword.style.display =
+                    "none";
+
+                nameInput.required = true;
+
+                confirmPasswordInput.required =
+                    true;
+
+            } else {
+
+                loginTab.classList.add("active");
+
+                registerTab.classList.remove("active");
+
+                nameGroup.classList.add("hidden");
+
+                confirmPasswordGroup
+                    .classList
+                    .add("hidden");
+
+                formTitle.textContent =
+                    "Welcome back";
+
+                formSubtitle.textContent =
+                    "Sign in to continue to BookMyToilet.";
+
+                submitButton.textContent =
+                    "Sign in";
+
+                switchButton.textContent =
+                    "Create one";
+
+                forgotPassword.style.display =
+                    "inline";
+
+                nameInput.required = false;
+
+                confirmPasswordInput.required =
+                    false;
+            }
+        }
+
+
+        loginTab.addEventListener(
+            "click",
+            () => setMode(false)
+        );
+
+
+        registerTab.addEventListener(
+            "click",
+            () => setMode(true)
+        );
+
+
+        switchButton.addEventListener(
+            "click",
+            () => setMode(!registerMode)
+        );
+
+
+        // ---------------------------------------------
+        // SHOW / HIDE PASSWORD
+        // ---------------------------------------------
+
+        togglePassword.addEventListener(
+            "click",
+            () => {
+
+                const isPassword =
+                    passwordInput.type === "password";
+
+                passwordInput.type =
+                    isPassword
+                        ? "text"
+                        : "password";
+
+                togglePassword.textContent =
+                    isPassword
+                        ? "Hide"
+                        : "Show";
+            }
+        );
+
+
+        // ---------------------------------------------
+        // FORM SUBMISSION
+        // ---------------------------------------------
+
+        authForm.addEventListener(
+            "submit",
+            async (event) => {
+
+                event.preventDefault();
+
+                clearMessage();
+
+                const email =
+                    emailInput.value.trim();
+
+                const password =
+                    passwordInput.value;
+
+
+                // REGISTER
+
+                if (registerMode) {
+
+                    const name =
+                        nameInput.value.trim();
+
+                    const confirmPassword =
+                        confirmPasswordInput.value;
+
+
+                    if (!name) {
+
+                        showError(
+                            "Please enter your name."
+                        );
+
+                        return;
+                    }
+
+
+                    if (password.length < 6) {
+
+                        showError(
+                            "Password must contain at least 6 characters."
+                        );
+
+                        return;
+                    }
+
+
+                    if (
+                        password !==
+                        confirmPassword
+                    ) {
+
+                        showError(
+                            "Passwords do not match."
+                        );
+
+                        return;
+                    }
+
+
+                    try {
+
+                        setLoading(true);
+
+
+                        const userCredential =
+                            await createUserWithEmailAndPassword(
+                                auth,
+                                email,
+                                password
+                            );
+
+
+                        await updateProfile(
+                            userCredential.user,
+                            {
+                                displayName: name
+                            }
+                        );
+
+                        // Create the application's user profile using
+                        // Firebase Authentication's permanent UID.
+                        await setDoc(
+                            doc(db, "users", userCredential.user.uid),
+                            {
+                                uid: userCredential.user.uid,
+                                username: name,
+                                email: userCredential.user.email,
+                                createdAt: serverTimestamp()
+                            }
+                        );
+
+
+                        showSuccess(
+                            "Account created successfully."
+                        );
+
+
+                     
+
+                        window.location.href =
+                            "index.html";
+                        
+
+                    } catch (error) {
+
+                        showFirebaseError(error);
+
+                    } finally {
+
+                        setLoading(false);
+                    }
+
+
+                // LOGIN
+
+                } else {
+
+                    try {
+
+                        setLoading(true);
+
+
+                        await signInWithEmailAndPassword(
+                            auth,
+                            email,
+                            password
+                        );
+
+
+                        showSuccess(
+                            "Signed in successfully."
+                        );
+
+
+                        
+
+                        window.location.href =
+                            "index.html";
+                        
+
+                    } catch (error) {
+
+                        showFirebaseError(error);
+
+                    } finally {
+
+                        setLoading(false);
+                    }
+                }
+
+            }
+        );
+
+
+        // ---------------------------------------------
+        // FORGOT PASSWORD
+        // ---------------------------------------------
+
+        forgotPassword.addEventListener(
+            "click",
+            async () => {
+
+                const email =
+                    emailInput.value.trim();
+
+
+                if (!email) {
+
+                    showError(
+                        "Enter your email address first."
+                    );
+
+                    return;
+                }
+
+
+                try {
+
+                    await sendPasswordResetEmail(
+                        auth,
+                        email
+                    );
+
+                    showSuccess(
+                        "Password reset email sent."
+                    );
+
+                } catch (error) {
+
+                    showFirebaseError(error);
+                }
+            }
+        );
+
+
+        // ---------------------------------------------
+        // UI HELPERS
+        // ---------------------------------------------
+
+        function setLoading(loading) {
+
+            submitButton.disabled =
+                loading;
+
+
+            if (loading) {
+
+                submitButton.textContent =
+                    "Please wait...";
+
+            } else {
+
+                submitButton.textContent =
+                    registerMode
+                        ? "Create account"
+                        : "Sign in";
+            }
+        }
+
+
+        function showError(message) {
+
+            formMessage.textContent =
+                message;
+
+            formMessage.className =
+                "form-message error";
+        }
+
+
+        function showSuccess(message) {
+
+            formMessage.textContent =
+                message;
+
+            formMessage.className =
+                "form-message success";
+        }
+
+
+        function clearMessage() {
+
+            formMessage.textContent =
+                "";
+
+            formMessage.className =
+                "form-message";
+        }
+
+
+        // ---------------------------------------------
+        // FIREBASE ERRORS
+        // ---------------------------------------------
+
+        function showFirebaseError(error) {
+
+            console.error(error);
+
+
+            switch (error.code) {
+
+                case "auth/email-already-in-use":
+
+                    showError(
+                        "An account with this email already exists."
+                    );
+
+                    break;
+
+
+                case "auth/invalid-email":
+
+                    showError(
+                        "Please enter a valid email address."
+                    );
+
+                    break;
+
+
+                case "auth/invalid-credential":
+
+                    showError(
+                        "Incorrect email or password."
+                    );
+
+                    break;
+
+
+                case "auth/weak-password":
+
+                    showError(
+                        "Please choose a stronger password."
+                    );
+
+                    break;
+
+
+                case "auth/too-many-requests":
+
+                    showError(
+                        "Too many attempts. Please try again later."
+                    );
+
+                    break;
+
+
+                default:
+
+                    showError(
+                        "Something went wrong. Please try again."
+                    );
+            }
+        }
+
+
+        // Start with Login mode
+
+        setMode(false);
+
+    </script>
+
+</body>
+</html>
