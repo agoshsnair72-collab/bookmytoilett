@@ -2,96 +2,81 @@
 
 
 
-# [Project Name] 🎯
+# BookMyToilet 🎯
 
 
 ## Basic Details
-### Team Name: [Name]
+### Team Name: 
 
 
 ### Team Members
-- Team Lead: [Name] - [College]
-- Member 2: [Name] - [College]
-- Member 3: [Name] - [College]
+- Team Lead: Amal Krishna - Government Engineering College, Kozhikode
+- Member 2: Agosh S Nair - Government Engineering College, Kozhikode
+  
 
 ### Project Description
-[2-3 lines about what your project does]
+BookMyToilet is a smart public-toilet discovery and booking platform. Find toilets by locality, check availability, book time slots, track actual usage, view user rankings, and connect with the community through real-time chat.
 
 ### The Problem (that doesn't exist)
-[What ridiculous problem are you solving?]
+people can't find toilets and there is no toilet booking system
 
 ### The Solution (that nobody asked for)
-[How are you solving it? Keep it fun!]
+Developing a smart toilet booking system while creating a competitive environment that encourages people to use public toilets instead of practicing open defecation.
 
 ## Technical Details
 ### Technologies/Components Used
 For Software:
-- [Languages used]
-- [Frameworks used]
-- [Libraries used]
-- [Tools used]
+- HTML, CSS, JavaScript
+- Firebase
+- Firebase Authentication, Firebase Firestore, Firebase JavaScript SDK
+- Visual Studio Code
+- Git & GitHub
+- Firebase Console
+- Web Browser
 
 For Hardware:
-- [List main components]
-- [List specifications]
-- [List tools required]
+- N/A
 
 ### Implementation
 For Software:
 # Installation
-[commands]
+git clone <repository-url>
+cd BookMyToilet
 
 # Run
-[commands]
+Open index.html
+→ Run with Live Server
 
 ### Project Documentation
 For Software:
 
-# Screenshots (Add at least 3)
-![Screenshot1](Add screenshot 1 here with proper name)
-*Add caption explaining what this shows*
+# Screenshots 
+<img width="1890" height="902" alt="image" src="https://github.com/user-attachments/assets/5655cadd-90e1-4098-a5d5-f350206b8476" />
 
-![Screenshot2](Add screenshot 2 here with proper name)
-*Add caption explaining what this shows*
+home page of our website
 
-![Screenshot3](Add screenshot 3 here with proper name)
-*Add caption explaining what this shows*
+<img width="1887" height="915" alt="image" src="https://github.com/user-attachments/assets/f46b3e5c-d10b-44ae-9263-bac468c45dd7" />
+
+booking system of toilets
+
+<img width="1892" height="911" alt="image" src="https://github.com/user-attachments/assets/c916c90d-efa4-42d3-8127-a8e7513b8e84" />
+
+ranking system of users based their uses
 
 # Diagrams
-![Workflow](Add your workflow/architecture diagram here)
-*Add caption explaining your workflow*
+<img width="1312" height="1199" alt="image" src="https://github.com/user-attachments/assets/6969cd79-a383-4f0c-99a1-e93c385517a2" />
 
-For Hardware:
-
-# Schematic & Circuit
-![Circuit](Add your circuit diagram here)
-*Add caption explaining connections*
-
-![Schematic](Add your schematic diagram here)
-*Add caption explaining the schematic*
-
-# Build Photos
-![Components](Add photo of your components here)
-*List out all components shown*
-
-![Build](Add photos of build process here)
-*Explain the build steps*
-
-![Final](Add photo of final product here)
-*Explain the final build*
+Workflow Caption:
+The workflow begins with user registration and authentication, followed by searching and booking public toilets based on locality and available time slots. Users can start and finish their toilet usage, with actual usage duration recorded in Firebase. This data contributes to user rankings, while the platform also provides community chat and profile management features.
 
 ### Project Demo
 # Video
-[Add your demo video link here]
-*Explain what the video demonstrates*
+https://drive.google.com/file/d/1ZpoBD3RgSMekoVRPGDmWGni69TzsJQTj/view?usp=drive_link
+The video navigates through various section of the website.
 
-# Additional Demos
-[Add any extra demo materials/links]
+# Additional Demos (Deployed website)
+https://bookmytoilet-d9db9.web.app
 
-## Team Contributions
-- [Name 1]: [Specific contributions]
-- [Name 2]: [Specific contributions]
-- [Name 3]: [Specific contributions]
 
 ---
 Made with ❤️ at TinkerHub Useless Projects 
